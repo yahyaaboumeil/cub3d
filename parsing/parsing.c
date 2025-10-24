@@ -10,6 +10,11 @@ char **parsing(char *file_name)
         return NULL;
    }
 
-
+   if (!diretion_pasing(file_name))
+   {
+      printf("\nthe 6 lines is't good\n");
+      return NULL;
+   }
+   printf("\nthe 6 lines is good\n");
    return NULL;
 }
