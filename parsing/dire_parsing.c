@@ -48,36 +48,55 @@ bool    check_path(char *line)
 
 
 
-bool check_line(char *line, t_direction *directions)
+static bool check_line(char *line, t_direction *directions)
 {
 
-    if (!ft_strncmp(line, "NO", 2))
+    int i;
+
+    i = 0;
+    while (line[i++] == ' ');
+    if (i-- == (int)ft_strlen(line))
+        return true;
+    
+    if (!ft_strncmp(line+i, "NO", 2))
     {
         directions->no_count++;
-        if (!check_path(line))
+        if (!check_path(line+i))
             return false;
     } 
-    else if (!ft_strncmp(line, "SO", 2))
+    else if (!ft_strncmp(line+i, "SO", 2))
     {
         directions->so_count++;
-        if (!check_path(line))
+        if (!check_path(line+i))
             return false;
     }
-    else if (!ft_strncmp(line, "WE", 2))
+    else if (!ft_strncmp(line+i, "WE", 2))
     {
         directions->we_count++;
-        if (!check_path(line))
+        if (!check_path(line+i))
             return false;
     }
-    else if (!ft_strncmp(line, "EA", 2))
+    else if (!ft_strncmp(line+i, "EA", 2))
     {
         directions->ea_count++;
-        if (!check_path(line))
+        if (!check_path(line+i))
             return false;
     }
     else
         return false;
     return true;
+}
+
+bool    is_esp_line(char *line)
+{
+    int i;
+
+    i = 0;
+    while (line[i] && line[i] == ' ')
+       i++; 
+    if (!line[i] || line[i] == '\n')
+        return true;
+    return false;
 }
 
 char *get_line(int fd)
@@ -87,7 +106,7 @@ char *get_line(int fd)
     line = get_next_line(fd);
     if (!line)
         return line;
-    while (line && !ft_strncmp(line, "\n", ft_strlen(line)))
+    while (!ft_strncmp(line, "\n", ft_strlen(line)) || is_esp_line(line))
     {
         free(line);
         line = get_next_line(fd); 
@@ -99,53 +118,97 @@ char *get_line(int fd)
 char **check_count(char **lines, t_direction dire)
 {
 
-    if (dire.no_count > 1)
+    if (dire.no_count != 1)
         return NULL;
-    if (dire.ea_count > 1)
+    if (dire.ea_count != 1)
         return NULL;
-    if (dire.we_count > 1)
+    if (dire.we_count != 1)
         return NULL;
-    if (dire.so_count > 1)
+    if (dire.so_count != 1)
         return NULL;
 
     return lines;
 }
 
-static  void    init_struct(t_direction *dire, char **line)
+static  void    init_struct(t_direction *dire)
 {
 
-    i = 0;
-    line = NULL
     dire->no_count = 0;
     dire->ea_count = 0;
     dire->we_count = 0;
     dire->so_count = 0;
 }
 
-
-
-char **diretion_pasing(char *file_name)
+void    free_memory(char **arr)
 {
     int i;
-    int fd = 0;
-    char *line;
-    char **lines;
-    t_direction dire;
 
-    lines = &line;
-    init_struct(&dire, &line, &i);
-    fd = open_file(file_name, fd);
-    if (fd == -1)
-        return (printf("\nError\nCannot open file\n"), NULL);
-    while (++i)
+    i = 0;
+    while (arr && arr[i])
+    {
+        // printf("\n line  = %s \n", arr[i]);
+        free(arr[i++]);
+    }
+    free(arr);
+}
+
+void    free_getline(int fd)
+{
+    char *line;
+
+    line = NULL;
+    while (1)
+    {
+        line = get_next_line(fd);
+        if (line == NULL)
+            return ;
+        free(line);
+        line = NULL;        
+    }
+}
+
+char    *cpy_line(char *line)
+{
+   int  i;
+
+   i = 0;
+   while (line[i] == ' ')
+        i++;
+    return ft_strdup(line+i);
+}
+
+static char **full_arr(int fd, char **lines ,t_direction *dire, int i)
+{
+    char *line;
+   
+    while (++i < 5)
     { 
         line = get_line(fd);
         if (!line)
             break;
-        if (!check_line(line, &dire))
-            return NULL;
+        if (!check_line(line, &*dire))
+            return (free(line), free_memory(lines), free_getline(fd), NULL); 
+        lines[i-1] = cpy_line(line);
+        lines[i] = NULL;
         free(line);
     }
-    return (check_count(lines, dire));
+    return lines;
+}
+
+char **diretion_pasing(int fd)
+{
+    int i;
+    char **lines;
+    t_direction dire;
+
+    i = 0;
+    init_struct(&dire);
+    lines = malloc((sizeof(char*) * 5));
+    if (!lines)
+        return NULL;
+    lines = full_arr(fd, lines,&dire, i);
+    if (!check_count(lines, dire))
+        return (free_memory(lines),free_getline(fd),NULL);
+    return (lines);
 }
 

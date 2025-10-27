@@ -12,16 +12,18 @@
 
 #include "parsing.h"
 
-// size_t	ft_strlen(const char *s)
-// {
-// 	size_t	i;
+char	*ft_strdup(const char *s)
+{
+	char	*ptr;
+	size_t	len;
 
-// 	i = 0;
-// 	while (s[i])
-// 		i++;
-// 	return (i);
-// }
-
+	len = ft_strlen(s);
+	ptr = (char *)malloc(sizeof(char) * (len + 1));
+	if (ptr == NULL)
+		return (NULL);
+	ft_strlcpy(ptr, s, len + 1);
+	return (ptr);
+}
 static size_t	is_find(const char *big, const char *little, size_t pos,
 		size_t len)
 {
@@ -68,5 +70,33 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 		i++;
 	}
+	return (0);
+}
+int	ft_atoi(const char *nptr)
+{
+	int	sig;
+	int	num;
+
+	sig = 1;
+	num = 0;
+	while ((*nptr >= 9 && *nptr <= 13) || *nptr == 32)
+		nptr++;
+	if (*nptr == '+' || *nptr == '-')
+	{
+		if (*nptr == '-')
+			sig *= -1;
+		nptr++;
+	}
+	while (*nptr >= '0' && *nptr <= '9')
+	{
+		num = (num * 10) + (*nptr - '0');
+		nptr++;
+	}
+	return (num * sig);
+}
+int	ft_isdigit(int c)
+{
+	if (c >= 48 && c <= 57)
+		return (1);
 	return (0);
 }

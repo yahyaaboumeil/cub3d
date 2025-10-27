@@ -1,7 +1,8 @@
 CC = cc -g
 NAME = cub3d 
 CFLAGS = -Wall -Wextra -Werror 
-SRCS = main.c parsing/parsing.c parsing/utils.c parsing/check.c parsing/dire_parsing.c parsing/get_next_line/get_next_line.c  parsing/get_next_line/get_next_line_utils.c
+SRCS = main.c parsing/parsing.c parsing/utils.c parsing/check.c parsing/dire_parsing.c parsing/get_next_line/get_next_line.c  parsing/get_next_line/get_next_line_utils.c parsing/color/color_parsing.c parsing/color/ft_split.c parsing/color/check_line.c parsing/map_parsing.c
+
 
 OBJS = $(SRCS:.c=.o)
 
