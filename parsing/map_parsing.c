@@ -30,11 +30,15 @@ bool	check_last_line(char *line)
 
 void	err_map(int fd,char *line, char **lines)
 {
+
+	(void)fd;
+	(void)lines;
+	(void)line;
 	printf("\nError\nYour map should have '1' in the start and at end\n");
-	free(line);
-	free_getline(fd);
-	free_memory(lines);
-	exit(1);
+	// free(line);
+	// free_getline(fd);
+	// free_memory(lines);
+	// exit(1);
 }
 
 int	skip_espas(char *line)
@@ -57,7 +61,7 @@ bool	check_map_line(int fd,char *line, t_counters *counters, char **lines)
 	(1) && (i = 0, len = ft_strlen(line));
 	i = skip_espas(line);
 	if (line[i] != '1' || line[len - 2] != '1')
-		err_map(fd, line, lines);
+		return (err_map(fd, line, lines), false);
 	while (line[i] && line[i] != '\n')
 	{
 		if (line[i] != '1' && line[i] != '0')
@@ -97,12 +101,13 @@ bool	check_map_line(int fd,char *line, t_counters *counters, char **lines)
 char	**check_err(int fd, t_counters counters, char *line,
 		char **lines)
 {
+	(void)fd;
 	if (counters.count_err == -1 || counters.count_c < 1)
 	{
 		printf("\nError\nmap has error\n");
 		free(line);
-		free_getline(fd);
-		free_memory(lines);
+		// free_getline(fd);
+		// free_memory(lines);
 		return (NULL);
 	}
 	if (counters.count_p != 1 || counters.count_e != 1)
@@ -110,14 +115,14 @@ char	**check_err(int fd, t_counters counters, char *line,
 		printf("\nError\nThe (E OR P) are duplicate in map\n");
 		if (line)
 			free(line);
-		free_getline(fd);
-		free_memory(lines);
+		// free_getline(fd);
+		// free_memory(lines);
 		return (NULL);
 	}
 	if (!check_last_line(line))
 	{
 		printf("\nError\nlast line is't good\n");
-		free_memory(lines);
+		// free_memory(lines);
 		return (NULL);
 	}
 	free(line);

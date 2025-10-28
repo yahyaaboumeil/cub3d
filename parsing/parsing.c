@@ -30,8 +30,12 @@ char **parsing(char *file_name)
    }
    printf("\nthe 2 color lines is good\n");
    
-   lines  = check_input(fd, lines);
-   free_memory(lines);
-   free_getline(fd);
+
+  lines  = check_input(fd, lines);
+  if (!lines)
+  {
+      free_memory(lines);
+      free_getline(fd);
+  }
    return NULL;
 }

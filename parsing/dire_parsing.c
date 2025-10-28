@@ -110,6 +110,8 @@ char *get_line(int fd)
     {
         free(line);
         line = get_next_line(fd); 
+        if (!line)
+            break;
     }
 
     return line;
