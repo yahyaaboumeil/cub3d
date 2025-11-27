@@ -2,16 +2,15 @@
 #include <unistd.h>
 
 #include "./parsing/parsing.h"
+#include "./execution/cub3d.h"
 
 
 int main(int ac, char **av)
 {
-    // printf("%d\n", ac);
-    ac = 2;
-    av[1] = "map.cub";
     if (ac == 2)
     {
-        parsing(av[1]);
+        t_data *data = parsing(av[1]);
+        play(data);
     }
     return 0;
 }

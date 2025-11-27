@@ -65,7 +65,6 @@ bool check_line(char *line, t_count *count_color)
     while (*content == ' ')
         content++;
 
-    // split by ','
     split = ft_split(content, ',');
     while (split && split[parts])
         parts++;

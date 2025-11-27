@@ -60,7 +60,7 @@ char	*split_at_new_line(char **s_line)
 		return (record);
 	}
 	record = ft_substr(*s_line, 0, ft_strlen(*s_line));
-	free(*s_line);
+	// free(*s_line);
 	*s_line = NULL;
 	return (record);
 }

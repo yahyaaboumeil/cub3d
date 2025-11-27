@@ -9,127 +9,138 @@
 /*   Updated: 2025/02/26 20:17:35 by yaboumei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "parsing.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
-bool	check_last_line(char *line)
+/* --- helpers --- */
+
+static int last_non_newline_index(const char *line)
 {
-	int	i;
+    int len;
 
-	i = 0;
-	while (line[i])
-	{
-		if (line[i++] != '1')
-		{
-			free(line);
-			return (false);
-		}
-	}
-	return (true);
+    if (!line)
+        return -1;
+    len = ft_strlen(line);
+    if (len == 0)
+        return -1;
+    /* index of last character before '\0' */
+    len--;
+    /* skip trailing newline(s) and spaces at end */
+    while (len >= 0 && (line[len] == '\n' || line[len] == '\r' || line[len] == ' '))
+        len--;
+    return len;
 }
 
-void	err_map(int fd,char *line, char **lines)
-{
-	printf("\nError\nYour map should have '1' in the start and at end\n");
-	free(line);
-	free_getline(fd);
-	free_memory(lines);
-	exit(1);
-}
-
-int	skip_espas(char *line)
-{
-	int	i;
-
-	i = 0;
-	while (line[i] && line[i] == ' ')
-		i++;
-	return i;
-}
-
-bool	check_map_line(int fd,char *line, t_counters *counters, char **lines)
-{
-	int	i;
-	int	len;
-
-	if (line == NULL)
-		return (false);
-	(1) && (i = 0, len = ft_strlen(line));
-	i = skip_espas(line);
-	if (line[i] != '1' || line[len - 2] != '1')
-		err_map(fd, line, lines);
-	while (line[i] && line[i] != '\n')
-	{
-		if (line[i] != '1' && line[i] != '0')
-		{
-			if (line[i] == 'P')
-				counters->count_p++;
-			else if (line[i] == 'C')
-				counters->count_c++;
-			else if (line[i] == 'E')
-				counters->count_e++;
-			else
-				return (counters->count_err = -1);
-		}
-		i++;
-	}
-	return (true);
-}
-
-// char	*get_map(char *line1, char *line2)
-// {
-// 	char	*new_line;
-
-// 	if (line1[0] == 0)
-// 	{
-// 		line1 = malloc(sizeof(char));
-// 		line1[0] = 0;
-// 	}
-// 	if (line2 == NULL)
-// 		return (NULL);
-// 	new_line = ft_strjoin(line1, line2);
-// 	if (new_line == NULL)
-// 		return (NULL);
-// 	free(line1);
-// 	return (new_line);
-// }
-
-char	**check_err(int fd, t_counters counters, char *line,
-		char **lines)
-{
-	if (counters.count_err == -1 || counters.count_c < 1)
-	{
-		printf("\nError\nmap has error\n");
-		free(line);
-		free_getline(fd);
-		free_memory(lines);
-		return (NULL);
-	}
-	if (counters.count_p != 1 || counters.count_e != 1)
-	{
-		printf("\nError\nThe (E OR P) are duplicate in map\n");
-		if (line)
-			free(line);
-		free_getline(fd);
-		free_memory(lines);
-		return (NULL);
-	}
-	if (!check_last_line(line))
-	{
-		printf("\nError\nlast line is't good\n");
-		free_memory(lines);
-		return (NULL);
-	}
-	free(line);
-	return (lines);
-}
-
-
-int count(char **lines)
+bool check_last_line(char *line)
 {
     int i;
 
+    if (!line)
+        return false;
+
     i = 0;
+    /* skip leading spaces */
+    while (line[i] && line[i] == ' ')
+        i++;
+
+    /* from first non-space until newline or end, all chars should be '1' */
+    while (line[i] && line[i] != '\n')
+    {
+        if (line[i] != '1' && line[i] != ' ')
+            return false;
+        i++;
+    }
+    return true;
+}
+
+void err_map(int fd, char *line, char **lines)
+{
+    printf("\nError\nYour map should have '1' in the start and at end\n");
+    if (line)
+        free(line);
+    free_getline(fd);
+    free_memory(lines);
+    exit(1);
+}
+
+int skip_espas(char *line)
+{
+    int i = 0;
+    if (!line)
+        return 0;
+    while (line[i] && line[i] == ' ')
+        i++;
+    return i;
+}
+
+bool check_map_line(int fd, char *line, t_counters *counters, char **lines)
+{
+    int i;
+    int end;
+
+    if (line == NULL)
+        return false;
+    i = skip_espas(line);
+    end = last_non_newline_index(line);
+    if (end < 0)
+        err_map(fd, line, lines);
+    if (line[i] != '1' || line[end] != '1')
+        err_map(fd, line, lines);
+    while (line[i] && line[i] != '\n')
+    {
+        if (line[i] != '1' && line[i] != '0' && line[i] != ' ')
+        {
+            if (line[i] == 'N' || line[i] == 'S' || line[i] == 'W' || line[i] == 'E')
+                counters->count_p++;
+            else 
+               return (counters->count_err = -1, false);
+        }
+        i++;
+    }
+    return true;
+}
+
+char **check_err(int fd, t_counters counters, char *line, char **lines)
+{
+    if (counters.count_err == -1)
+    {
+        printf("\nError\nmap has error\n");
+		free(line);
+        free_getline(fd);
+        free_memory(lines);
+        return NULL;
+    }
+    if (counters.count_p != 1)
+    {
+        if (counters.count_p == 0)
+            printf("\nError\nNo starting position (N/S/W/E) in map\n");
+        else
+            printf("\nError\nMultiple starting positions (N/S/W/E) in map\n");
+		free(line);
+        free_getline(fd);
+        free_memory(lines);
+        return NULL;
+    }
+    if (!check_last_line(line))
+    {
+        printf("\nError\nlast line isn't valid\n");
+		free(line);
+        free_getline(fd);
+        free_memory(lines);
+        return NULL;
+    }
+    if (line)
+        free(line);
+    return lines;
+}
+
+int count(char **lines)
+{
+    int i = 0;
+    if (!lines)
+        return 0;
     while (lines[i])
         i++;
     return i;
@@ -140,86 +151,103 @@ char **add_line(char *line, char **lines)
     char **new;
     int i;
 
-    i = -1;
-    new = malloc((sizeof(char *) * count(lines)) + 1);
+    i = 0;
+    new = malloc(sizeof(char *) * (count(lines)+ 2));
     if (new == NULL)
         return NULL;
-    while (lines[++i])
-        new[i] = lines[i];
-    new[i++] = ft_strdup(line);
+    while (lines[i])
+    {
+        new[i] = ft_strdup(lines[i]);
+        i++;
+    }
+    new[i] = ft_strdup(line); /* copy added line */
+    if (!new[i])
+    {
+        while (--i >= 0)
+            free(new[i]);
+        free(new);
+        return NULL;
+    }
+    i++;
     new[i] = NULL;
-	return new;
+    free_memory(lines);
+    return new;
 }
 
-
-
-bool	check_first_line(int fd, char **lines)
+char **check_first_line(int fd, char **lines)
 {
-	char	*line;
-	int		i;
+    char *line;
+    int i;
 
-	i = 0;
-	line = get_line(fd);
-	if (line == NULL)
-		return (false);
+    line = get_line(fd);
+    if (line == NULL)
+        return NULL;
     i = skip_espas(line);
-	while (line[i] && line[i] != '\n')
-	{
-		if (line[i++] != '1')
-		{
-			free_memory(lines);
-			free(line);
-			free_getline(fd);
-			return (false);
-		}
-	}
-    lines = add_line(line, lines); 
-	free(line);
-	return (true);
+    while (line[i] && line[i] != '\n')
+    {
+        if (line[i] != '1' && line[i] != ' ')
+        {
+            i++;
+            free_memory(lines);
+            free(line);
+            free_getline(fd);
+            return NULL;
+        }
+        i++;
+    }
+	lines = add_line(line, lines);
+    if (!lines)
+    {
+        free(line);
+        free_getline(fd);
+        free_memory(lines);
+        return NULL;
+    }
+    free(line);
+    return lines;
 }
 
 char **help(char **lines, char **line, int fd)
 {
-	if (!check_first_line(fd, lines))
-	{
-		printf("\nError\nThe first line is't correct\n");
-		exit(1);
-	}
-	*line = get_line(fd);
-	return lines;
-}
-t_counters	init(t_counters *counters)
-{
-	counters->count_c = 0;
-	counters->count_e = 0;
-	counters->count_p = 0;
-	counters->count_err = 0;
-
-	return *counters;
+	lines = check_first_line(fd, lines);
+    if (!lines)
+    {
+        printf("\nError\nThe first line isn't correct\n");
+        exit(1);
+    }
+    *line = get_line(fd);
+    return lines;
 }
 
-char	**check_input(int fd, char **lines)
+t_counters init(t_counters *counters)
 {
-	char	*line;
-	char	*temp;
-	int	i;
-	t_counters counters;
+    counters->count_p = 0;
+    counters->count_err = 0;
+    return *counters;
+}
 
-	counters =  init(&counters);
-	i = 6;
-	lines = help(lines, &line, fd);
-	while (++i)
-	{
-		if (!check_map_line(fd, line, &counters, lines))
-			break ;
-		lines[i] = ft_strdup(line);
-		temp = get_line(fd);
-		if (temp == NULL)
-			break ;
-		if (line)
-			free(line);
-		line = temp;
-	}
-	return (check_err(fd, counters, line, lines));
+char **check_input(int fd, char **lines)
+{
+    int i;
+    char *line;
+    char *temp;
+    t_counters counters;
 
+    i = 0;
+    counters = init(&counters);
+    lines = help(lines, &line, fd); /* adds the first map line internally */
+    while (true)
+    {
+        if (!check_map_line(fd, line, &counters, lines))
+            break;
+		lines = add_line(line, lines);
+        temp = get_line(fd);
+        if (temp == NULL)
+            break;
+        if (line)
+            free(line);
+        line = temp;
+        i++;
+    }
+    return check_err(fd, counters, line, lines);
 }

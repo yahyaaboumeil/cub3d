@@ -5,5 +5,4 @@
 
 bool check_line(char *line, t_count *count_color);
 
-char	**ft_split(char const *s, char c);
 #endif

@@ -40,9 +40,11 @@ bool    check_path(char *line)
     if (*(line+ft_strlen(line)-1) == '\n')
         *(line+ft_strlen(line)-1) = 0;
     path = line+i;
+    printf("\npath %s\n", path);
     fd  = open(path, O_RDONLY);
     if (fd == -1)
         return (printf("\n the file is't exist\n"), false); 
+    close(fd);
     return true;
 }
 
@@ -50,14 +52,12 @@ bool    check_path(char *line)
 
 static bool check_line(char *line, t_direction *directions)
 {
-
     int i;
 
     i = 0;
     while (line[i++] == ' ');
     if (i-- == (int)ft_strlen(line))
         return true;
-    
     if (!ft_strncmp(line+i, "NO", 2))
     {
         directions->no_count++;
@@ -146,7 +146,6 @@ void    free_memory(char **arr)
     i = 0;
     while (arr && arr[i])
     {
-        // printf("\n line  = %s \n", arr[i]);
         free(arr[i++]);
     }
     free(arr);

@@ -1,20 +1,23 @@
-CC = cc -g
-NAME = cub3d 
-CFLAGS = -Wall -Wextra -Werror 
-SRCS = main.c parsing/parsing.c parsing/utils.c parsing/check.c parsing/dire_parsing.c parsing/get_next_line/get_next_line.c  parsing/get_next_line/get_next_line_utils.c parsing/color/color_parsing.c parsing/color/ft_split.c parsing/color/check_line.c parsing/map_parsing.c
+CC = cc
 
+NAME =	cub3d 
+
+CFLAGS = -Wall -Wextra -Werror -g
+
+SRCS = main.c parsing/parsing.c parsing/utils.c parsing/check.c parsing/dire_parsing.c parsing/get_next_line/get_next_line.c  parsing/get_next_line/get_next_line_utils.c parsing/color/color_parsing.c parsing/ft_split.c parsing/color/check_line.c parsing/map_parsing.c execution/cub3d.c 
 
 OBJS = $(SRCS:.c=.o)
 
-# MLX_DIR = /usr/include/minilibx-linux
-# MLX = -I$(MLX_DIR) -L$(MLX_DIR) -lmlx -lXext -lX11
+MLX_DIR = minilibx-linux
+
+MLX =  -L$(MLX_DIR) -lmlx_Linux -lX11 -lXext
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(MLX_DIR) -c $< -o $@
+	$(CC) $(CFLAGS) -I$(MLX_DIR) -c $< -o $@
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME) : $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(MLX) -o $(NAME)
 
 clean:
@@ -23,4 +26,4 @@ clean:
 fclean: clean
 	rm -rf $(NAME)
 
-re: fclean all
+re: fclean all clean

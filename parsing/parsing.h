@@ -17,9 +17,7 @@ typedef struct s_color_parsing
 
 typedef struct s_counters
 {
-	int			count_e;
 	int			count_p;
-	int			count_c;
 	int			count_err;
 
 }				t_counters;
@@ -38,6 +36,21 @@ typedef struct s_tmap_info
 
 } t_map_info;
 
+typedef struct s_data
+{
+   char *north_path;
+   char *east_path;
+   char *south_path;
+   char *west_path;
+   int f_color[2];
+   int c_color[2];
+   int	x;
+   int	y;
+   int width;
+   int hight;	
+   char **map;
+} t_data;
+
 /*utils*/
 // size_t	ft_strlen(const char *s);
 char	*ft_strnstr(const char *big, const char *little, size_t len);
@@ -45,6 +58,8 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n);
 int	ft_atoi(const char *nptr);
 int	ft_isdigit(int c);
 char	*ft_strdup(const char *s);
+int skip_ind_space(char *line);
+char	**ft_split(char const *s, char c);
 
 int open_file(char *file_name, int fd);
 /*free*/
@@ -61,7 +76,7 @@ char    *cpy_line(char *line);
 
 char **diretion_pasing(int fd);
 char **color_parsing(char **old_lines, int fd);
-char **parsing(char *file_name);
 char	**check_input(int fd, char **lines);
 
+t_data *parsing(char *file_name);
 #endif

@@ -1,4 +1,5 @@
-#include "color.h"
+#include <unistd.h>
+#include <stdlib.h>
 
 static int	count_word(const char *s, char c)
 {
