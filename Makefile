@@ -8,7 +8,7 @@ SRCS = main.c parsing/parsing.c parsing/utils.c parsing/check.c parsing/dire_par
 
 OBJS = $(SRCS:.c=.o)
 
-MLX_DIR = minilibx-linux
+MLX_DIR = /usr/include/minilibx-linux
 
 MLX =  -L$(MLX_DIR) -lmlx_Linux -lX11 -lXext
 

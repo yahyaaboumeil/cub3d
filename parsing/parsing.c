@@ -100,7 +100,7 @@ t_data *convert_arr_to_struct(char **arr)
       data->map[i - 6] = ft_strdup(arr[i]);
       i++;
    }
-   data->map[i] = NULL;
+   data->map[i - 6] = NULL;
    save_x_y(data);
    free_memory(arr);
    return data;

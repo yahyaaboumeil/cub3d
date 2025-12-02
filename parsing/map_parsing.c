@@ -249,5 +249,7 @@ char **check_input(int fd, char **lines)
         line = temp;
         i++;
     }
+    
     return check_err(fd, counters, line, lines);
 }
+

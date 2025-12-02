@@ -33,73 +33,18 @@ static void init(t_info **info)
     (*info)->frame->line_len = 0;
     
 }
-// void init_player(t_info *d)
-// {
-//     int x, y;
-
-//     for (y = 0; y < d->map_height; y++)
-//     {
-//         for (x = 0; x < d->map_width; x++)
-//         {
-//             if (d->data->map[y][x] == 'N' || d->data->map[y][x] == 'S' ||
-//                 d->data->map[y][x] == 'E' || d->data->map[y][x] == 'W')
-//             {
-//                 d->player.x = x + 0.5;
-//                 d->player.y = y + 0.5;
-//                 if (d->data->map[y][x] == 'N') { d->player.dir_x = 0; d->player.dir_y = -1; d->player.plane_x = 0.66; d->player.plane_y = 0; }
-//                 if (d->data->map[y][x] == 'S') { d->player.dir_x = 0; d->player.dir_y = 1;  d->player.plane_x = -0.66; d->player.plane_y = 0; }
-//                 if (d->data->map[y][x] == 'E') { d->player.dir_x = 1; d->player.dir_y = 0;  d->player.plane_x = 0; d->player.plane_y = 0.66; }
-//                 if (d->data->map[y][x] == 'W') { d->player.dir_x = -1; d->player.dir_y = 0; d->player.plane_x = 0; d->player.plane_y = -0.66; }
-//                 return;
-//             }
-//         }
-//     }
-// }
-void put_pixel(t_img *img, int x, int y, int color)
-{
-    char *dst = img->addr + (y * img->line_len + x * (img->bpp / 8));
-    *(unsigned int *)dst = color;
-}
-void draw_background(t_info *d)
-{
-    int x, y;
-
-    // Ceiling
-    for (y = 0; y < 600 / 2; y++)
-        for (x = 0; x < 800; x++)
-            put_pixel(d->frame, x, y, 0x87CEEB); // sky blue
-
-    // Floor
-    for (y = 600 / 2; y < 600; y++)
-        for (x = 0; x < 800; x++)
-            put_pixel(d->frame, x, y, 0x654321); // brown
-}
-int render_frame(t_info *d)
-{
-    draw_background(d);
-    // TODO: draw walls using raycasting here later
-    mlx_put_image_to_window(d->mlx, d->win, d->frame->img, 0, 0);
-    return 0;
-}
-int handle_key(int key)
-{
-    if (key == 53) // ESC
-        exit(0);
-    // TODO: W, A, S, D movement
-    // TODO: Left / Right rotation
-    return 0;
-}
 
 void free_stuct(t_data *d)
 {
     free_memory(d->map);
-    // free(d->c_color);
-    // free(d->f_color);
     free(d->east_path);
     free(d->north_path);
     free(d->south_path);
     free(d->west_path);
+    
+    free(d);
 }
+
 void play(t_data *dat)
 {
     t_info *d;
@@ -109,20 +54,23 @@ void play(t_data *dat)
     d->mlx = mlx_init();
     d->win = mlx_new_window(d->mlx, 800, 600, "cub3D");
 
-    load_all_textures(d);
-    d->frame->img = mlx_new_image(d->mlx, 800, 600);
-    d->frame->addr = mlx_get_data_addr(d->frame->img, &d->frame->bpp,
-                                      &d->frame->line_len, &d->frame->endian);
+    // load_all_textures(d);
+    // d->frame->img = mlx_new_image(d->mlx, 800, 600);
+    // d->frame->addr = mlx_get_data_addr(d->frame->img, &d->frame->bpp,
+    //                                   &d->frame->line_len, &d->frame->endian);
 
     // init_player(d);
 
-    mlx_hook(d->win, 2, 1L << 0, handle_key, d); // key press
-    mlx_loop_hook(d->mlx, render_frame, d);      // main loop
-    mlx_loop(d->mlx);
+    // mlx_hook(d->win, 2, 1L << 0, handle_key, d); // key press
+    // mlx_loop_hook(d->mlx, render_frame, d);      // main loop
+    // mlx_loop(d->mlx);
     
-    free(d);
+    // free(d);
     free_stuct(dat);
-    
+    // mlx_destroy_display(d->mlx);
+    // mlx_destroy_window(d->mlx, d->win);
+    free(d->frame);
+    free(d);
 }
 
 // void play(t_data *data)
