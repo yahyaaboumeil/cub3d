@@ -17,6 +17,7 @@
 
 #include <math.h>
 
+#define PI 3.14159265359
 #define MAP_ROW 14
 #define MAP_COL 12
 #define TILE_SIZE 32
@@ -153,21 +154,177 @@ void draw_line(t_game *g, int x0, int y0, int x1, int y1, int color)
     }
 }
 
-void    ray(t_game *g, double rayAngle)
+int istherewall(t_game *g, double x, double y)
 {
-    double len_ray = 20000;
+    int xx = x / TILE_SIZE;
+    int yy = y / TILE_SIZE;
 
-    int rx = g->px + cos(rayAngle) * len_ray;
-    int ry = g->py + sin(rayAngle) * len_ray;
-    draw_line(g, g->px, g->py, rx, ry, 0x008000);
+    if (xx < 0 || yy < 0)
+        return 1;
+    if (yy >= MAP_COL || xx >= MAP_ROW) 
+        return 1;
+
+    return (g->map[yy][xx] == '1'); // FIXED
+}
+
+// void ray(t_game *g, double rayAngle)
+// {
+//     int israyfacingdown = (rayAngle > 0 && rayAngle < PI);
+//     int israyfacingup = !israyfacingdown;
+
+//     int israyfacingright = (rayAngle < PI/2 || rayAngle > 3*PI/2);
+//     int israyfacingleft  = !israyfacingright;
+
+//     double xintercep;
+//     double yintercep;
+//     double xstep;
+//     double ystep;
+
+//     yintercep = floor(g->py / TILE_SIZE) * TILE_SIZE;
+//     if (israyfacingdown)
+//         yintercep += TILE_SIZE;
+
+//     xintercep = g->px + (yintercep - g->py) / tan(rayAngle);
+
+//     ystep = TILE_SIZE;
+//     if (israyfacingup)
+//         ystep *= -1;
+
+//     xstep = TILE_SIZE / tan(rayAngle);
+//     if (israyfacingleft && xstep > 0)
+//         xstep *= -1;
+//     if (israyfacingright && xstep < 0)
+//         xstep *= -1;
+
+//     if (israyfacingup)
+//         yintercep--;
+
+//     double hitwallx = xintercep;
+//     double hitwally = yintercep;
+
+//     while (!istherewall(g, hitwallx, hitwally))
+//     {
+//         hitwallx += xstep;
+//         hitwally += ystep;
+//     }
+
+//     draw_line(g, g->px, g->py, (int)hitwallx, (int)hitwally, 0x008000);
+// }
+
+
+
+// void    ray(t_game *g, double rayAngle)
+// {
+//     int israyfacingdown = (rayAngle > 0 && rayAngle < PI);
+//     int israyfacingup = !israyfacingdown;
+//     int israyfacingright = (rayAngle < (0.5 * PI) || rayAngle < (1.5 * PI));
+//     int israyfacingleft = !israyfacingdown;
+
+//     double xintercep;
+//     double yintercep;
+//     double xstep;
+//     double ystep;
+
+//     //set next intersec
+//     yintercep = floor(g->py / TILE_SIZE) * TILE_SIZE;
+//     if (israyfacingdown)
+//         yintercep += TILE_SIZE;
+//     xintercep = g->px + (yintercep - g->py) / tan(rayAngle);
+
+//     ystep = TILE_SIZE;
+//     if (israyfacingup)
+//         ystep *= -1;
+//     xstep = TILE_SIZE / tan(rayAngle); 
+//     if (israyfacingleft && xstep > 0)
+//         israyfacingleft *= -1;
+//     if (israyfacingright && xstep < 0)
+//         israyfacingleft *= -1;
+
+//     if (israyfacingup)
+//         yintercep--;
+
+//     double hitwallx = xintercep;
+//     double hitwally = yintercep;
+
+//     while (!istherewall(g, hitwallx, hitwally))
+//     {
+//         hitwallx += xstep;
+//         hitwally += ystep;
+//     }
+    
+//     draw_line(g, g->px, g->py, hitwallx, hitwally, 0x008000);
+//     // double len_ray = 20000;
+// // draw_line(g, g->px, g->py, rx, ry, 0x008000);
+
+
+//     // int rx = g->px + cos(rayAngle) * len_ray;
+//     // int ry = g->py + sin(rayAngle) * len_ray;
+// }
+
+
+
+
+void ray(t_game *g, double rayAngle)
+{
+    int israyfacingdown = (rayAngle > 0 && rayAngle < PI);
+    int israyfacingup = !israyfacingdown;
+
+    int israyfacingright = (rayAngle < 0.5*PI || rayAngle > 1.5 * PI);
+    int israyfacingleft  = !israyfacingright;
+
+    double xintercep;
+    double yintercep;
+    double xstep;
+    double ystep;
+
+    // FIRST horizontal intersection
+    yintercep = floor(g->py / TILE_SIZE) * TILE_SIZE;
+    if (israyfacingdown)
+        yintercep += TILE_SIZE;
+
+    xintercep = g->px + (yintercep - g->py) / tan(rayAngle);
+
+    // STEPS
+    ystep = TILE_SIZE;
+    if (israyfacingup)
+        ystep *= -1;
+
+    xstep = TILE_SIZE / tan(rayAngle);
+    if (israyfacingleft && xstep > 0)
+        xstep *= -1;
+    if (israyfacingright && xstep < 0)
+        xstep *= -1;
+
+    if (israyfacingup)
+        yintercep--;
+
+    double hitwallx = xintercep;
+    double hitwally = yintercep;
+
+    // RAY MARCHING
+    while (!istherewall(g, hitwallx, hitwally))
+    {
+        hitwallx += xstep;
+        hitwally += ystep;
+    }
+
+    draw_line(g, g->px, g->py, (int)hitwallx, (int)hitwally, 0x008000);
+}
+
+double normalize(double angle)
+{
+    angle = angle / (2 * PI);
+    if (angle < 0)
+        angle = angle + (2 * PI);
+    return angle;
 }
 
 void release_rays(t_game *game)
 {
-    double start_ray = game->angle - (FOV/2);
+    double start_ray = normalize(game->angle) - (FOV/2);
     int coulm = 0;
 
-    for (int i = 0; i < NUM_RAYS; i++)
+    for (int i = 0; i < 1; i++)
     {
         ray(game, start_ray);
         coulm++;
@@ -185,6 +342,7 @@ void render(t_game *g)
 }
 
 
+
 int handle_input(int key, t_game *g)
 {
     double move_speed = 5;
@@ -192,14 +350,12 @@ int handle_input(int key, t_game *g)
 
     if (key == 65307) // ESC
         exit(0);
-    if (key == 97 || key == 65361) // A / Left arrow - rotate left
+    if (key == 97 || key == XK_Left) // A / Left arrow - rotate left
         g->angle -= rot_speed;
-    if (key == 100 || key == 65363) // D / Right arrow - rotate right
+    if (key == 100 || key == XK_Right) // D / Right arrow - rotate right
         g->angle += rot_speed;
-    if (key == 119 || key == 65362) // W
+    if (key == 119 || key == XK_Down) // W
     {
-        printf("cos[angle] = %f\n", cos(g->angle));
-        printf("sin[angle] = %f\n", sin(g->angle));
         int new_px = g->px + cos(g->angle) * move_speed;
         int new_py = g->py + sin(g->angle) * move_speed;
         if (!is_wall(g, new_px, g->py))
@@ -207,7 +363,7 @@ int handle_input(int key, t_game *g)
         if (!is_wall(g, g->px, new_py))
             g->py = new_py;
     }
-    if (key == 115 || key == 65364) // S
+    if (key == 115 || key == XK_Up) // S
     {
         int new_px = g->px - cos(g->angle) * move_speed;
         int new_py = g->py - sin(g->angle) * move_speed;
@@ -260,3 +416,51 @@ int main(void)
 
     return 0;
 }
+
+// void    ray(t_game *g, double rayAngle)
+// {
+//     int israyfacingdown = (rayAngle > 0 && rayAngle < PI);
+//     int israyfacingup = !israyfacingdown;
+//     int israyfacingright = (rayAngle < (0.5 * PI) || rayAngle < (1.5 * PI));
+//     int israyfacingleft = !israyfacingdown;
+
+//     double xintercep;
+//     double yintercep;
+//     double xstep;
+//     double ystep;
+
+//     //set next intersec
+//     yintercep = floor(g->py / TILE_SIZE) * TILE_SIZE;
+//     if (israyfacingdown)
+//         yintercep += TILE_SIZE;
+//     xintercep = g->px + (yintercep - g->py) / tan(rayAngle);
+
+//     ystep = TILE_SIZE;
+//     if (israyfacingup)
+//         ystep *= -1;
+//     xstep = TILE_SIZE / tan(rayAngle); 
+//     if (israyfacingleft && xstep > 0)
+//         israyfacingleft *= -1;
+//     if (israyfacingright && xstep < 0)
+//         israyfacingleft *= -1;
+
+//     if (israyfacingup)
+//         yintercep--;
+
+//     double hitwallx = xintercep;
+//     double hitwally = yintercep;
+
+//     while (!istherewall(g, hitwallx, hitwally))
+//     {
+//         hitwallx += xstep;
+//         hitwally += ystep;
+//     }
+    
+//     draw_line(g, g->px, g->py, hitwallx, hitwally, 0x008000);
+//     // double len_ray = 20000;
+// // draw_line(g, g->px, g->py, rx, ry, 0x008000);
+
+
+//     // int rx = g->px + cos(rayAngle) * len_ray;
+//     // int ry = g->py + sin(rayAngle) * len_ray;
+// }
