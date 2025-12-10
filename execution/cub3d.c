@@ -73,34 +73,3 @@ void play(t_data *dat)
     free(d);
 }
 
-// void play(t_data *data)
-// {
-//     t_info *info;
-
-//     info = malloc(sizeof(t_info));
-//     init(&info);
-//     info->data = data;
-//     info->mlx = mlx_init();
-//     if (!info->mlx)
-//         exit(1);
-        
-//     info->win = mlx_new_window(info->mlx, 800, 600, "cub3D");
-//     if (!info->win)
-//         exit(1);
-
-//     load_all_textures(info);
-    
-//     info->frame->img = mlx_new_image(info->mlx, 800, 600);
-//     if (!info->frame->img)
-//         exit(1);
-
-//     info->frame->addr = mlx_get_data_addr(info->frame->img,
-//                                         &info->frame->bpp, &info->frame->line_len, &info->frame->endian);
-//     info->frame->img = mlx_new_image(info->mlx, 800, 600);
-//     if (!info->frame->img)
-//         exit(1);
-
-//     info->frame->addr = mlx_get_data_addr(info->frame->img,
-//                                         &info->frame->bpp, &info->frame->line_len, &info->frame->endian);
-//     mlx_loop(info->mlx);
-// }

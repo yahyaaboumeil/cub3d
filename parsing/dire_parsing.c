@@ -40,7 +40,6 @@ bool    check_path(char *line)
     if (*(line+ft_strlen(line)-1) == '\n')
         *(line+ft_strlen(line)-1) = 0;
     path = line+i;
-    printf("\npath %s\n", path);
     fd  = open(path, O_RDONLY);
     if (fd == -1)
         return (printf("\n the file is't exist\n"), false); 

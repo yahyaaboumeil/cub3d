@@ -42,6 +42,14 @@ typedef struct s_game
     char **map;
 } t_game;
 
+double normalize(double angle)
+{
+    angle = fmod(angle , (2 * PI));
+    if (angle < 0)
+        angle = angle + (2 * PI);
+    return angle;
+}
+
 // Draw a pixel into the image
 void my_pixel_put(t_game *g, int x, int y, int color)
 {
@@ -169,26 +177,17 @@ int istherewall(t_game *g, double x, double y)
 
 double distancebetwen2points(int x1, int y1, int x2, int y2)
 {
-    return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+    return sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
 }
 
-void normalize_angle(double *a)
-{
-    while (*a < 0)
-        *a += 2 * PI;
-    while (*a >= 2 * PI)
-        *a -= 2 * PI;
-}
+
 double verticaldist(t_game *g, double rayAngle)
 {
-    normalize_angle(&rayAngle);
-
     int RayFacingDown   = (rayAngle > 0 && rayAngle < PI);
     int RayFacingUp     = !RayFacingDown;
     int RayFacingright  = (rayAngle < PI * 0.5 || rayAngle > PI * 1.5);
     int RayFacingleft   = !RayFacingright;
 
-    // FIX #1 — use px instead of py
     double x_intercept = floor(g->px / TILE_SIZE) * TILE_SIZE;
     if (RayFacingright)
         x_intercept += TILE_SIZE;
@@ -208,26 +207,29 @@ double verticaldist(t_game *g, double rayAngle)
     double ny = y_intercept;
     double nx = x_intercept;
 
-    // FIX #2 — offset X not Y
     if (RayFacingleft)
         nx -= 0.0001;
 
-    while (!istherewall(g, nx, ny) && nx >= 0 && nx <= WIN_WIDTH && ny >= 0 && ny <= WIN_HEIGHT)
+    // ADD THIS: Maximum iterations safety check
+    int max_iterations = 100;
+    int iterations = 0;
+    
+    while (!istherewall(g, nx, ny) && 
+           nx >= 0 && nx <= WIN_WIDTH && 
+           ny >= 0 && ny <= WIN_HEIGHT &&
+           iterations < max_iterations)  // ADD THIS
     {
         ny += y_step;
         nx += x_step;
+        iterations++;  // ADD THIS
     }
 
     return distancebetwen2points(g->px, g->py, nx, ny);
 }
-
 double horizontaldist(t_game *g, double rayAngle)
 {
-    normalize_angle(&rayAngle);
-
     int RayFacingDown = (rayAngle > 0 && rayAngle < PI);
     int RayFacingUp   = !RayFacingDown;
-
     int RayFacingright = (rayAngle < PI * 0.5 || rayAngle > PI * 1.5);
     int RayFacingleft  = !RayFacingright;
 
@@ -239,7 +241,7 @@ double horizontaldist(t_game *g, double rayAngle)
 
     double y_step = TILE_SIZE;
     if (RayFacingUp)
-        y_step = -TILE_SIZE;
+        y_step *= -1;
 
     double x_step = TILE_SIZE / tan(rayAngle);
     if (RayFacingleft && x_step > 0)
@@ -250,21 +252,29 @@ double horizontaldist(t_game *g, double rayAngle)
     double nx = x_intercept;
     double ny = y_intercept;
 
-    if (RayFacingUp)
-        ny -= 0.0001;
 
-    while (!istherewall(g, nx, ny) && nx >= 0 && nx <= WIN_WIDTH && ny >= 0 && ny <= WIN_HEIGHT)
+
+    // ADD THIS: Maximum iterations safety check
+    int max_iterations = 100;
+    int iterations = 0;
+
+    	if (RayFacingUp)
+	{
+		ny -= 0.0001;
+	}
+    while (!istherewall(g, nx, ny) &&
+           nx >= 0 && nx <= WIN_WIDTH &&
+           ny >= 0 && ny <= WIN_HEIGHT)  // ADD THIS
     {
         nx += x_step;
         ny += y_step;
     }
-
     return distancebetwen2points(g->px, g->py, nx, ny);
 }
 
 void ray(t_game *g, double rayAngle)
 {
-    normalize_angle(&rayAngle);
+    rayAngle = normalize(rayAngle);
 
     double vd = verticaldist(g, rayAngle);
     double hd = horizontaldist(g, rayAngle);
@@ -281,24 +291,19 @@ void ray(t_game *g, double rayAngle)
     draw_line(g, g->px, g->py, (int)hitX, (int)hitY, 0x00FF00);
 }
 
-double normalize(double angle)
-{
-    angle = angle / (2 * PI);
-    if (angle < 0)
-        angle = angle + (2 * PI);
-    return angle;
-}
-
 void release_rays(t_game *game)
 {
-    double start_ray = normalize(game->angle) - (FOV/2);
+    double start_ray = game->angle - (FOV/2);
+    start_ray = normalize(start_ray);
+
     int coulm = 0;
 
-    for (int i = 0; i < NUM_RAYS / 2; i++)
+    double angle_step = FOV / NUM_RAYS;
+    for (int i = 0; i < NUM_RAYS; i++)
     {
         ray(game, start_ray);
-        coulm++;
-        start_ray += FOV / NUM_RAYS;
+	printf("ray = %.2f\n", (start_ray * 180 / PI));
+       start_ray += angle_step;
     }
 }
 
@@ -317,6 +322,7 @@ int handle_input(int key, t_game *g)
     double move_speed = 5;
     double rot_speed = 0.1;
 
+    g->angle = normalize(g->angle);
     if (key == 65307) // ESC
         exit(0);
     if (key == 97 || key == XK_Left) // A / Left arrow - rotate left
@@ -342,7 +348,6 @@ int handle_input(int key, t_game *g)
         if (!is_wall(g, g->px, new_py))
             g->py = new_py;
     }
-
     render(g);
     return 0;
 }
