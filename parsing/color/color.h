@@ -3,6 +3,6 @@
 
 #include "../parsing.h"
 
-bool check_line(char *line, t_count *count_color);
+bool check_line2(char *line, t_count *count_color);
 
 #endif

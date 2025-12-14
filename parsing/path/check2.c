@@ -1,0 +1,80 @@
+#include "../parsing.h"
+
+
+char **check_count(char **lines, t_direction dire)
+{
+
+    if (dire.no_count != 1)
+        return NULL;
+    if (dire.ea_count != 1)
+        return NULL;
+    if (dire.we_count != 1)
+        return NULL;
+    if (dire.so_count != 1)
+        return NULL;
+
+    return lines;
+}
+
+bool    check_path(char *line)
+{
+    int i;
+    int fd;
+    char *path;
+
+    path = NULL;
+    i = skip_ind_space(line);
+    if (i == (int)ft_strlen(line))
+        return false;
+    if (*(line+ft_strlen(line)-1) == '\n')
+        *(line+ft_strlen(line)-1) = 0;
+    path = line+i;
+    fd  = open(path, O_RDONLY);
+    if (fd == -1)
+        return (printf("\n the file is't exist\n"), false); 
+    close(fd);
+    return true;
+}
+
+static bool norm(int i, char *line, t_direction *directions)
+{
+
+    if (!ft_strncmp(line+i, "WE", 2))
+    {
+        directions->we_count++;
+        if (!check_path(line+i))
+            return false;
+    }
+    else if (!ft_strncmp(line+i, "EA", 2))
+    {
+        directions->ea_count++;
+        if (!check_path(line+i))
+            return false;
+    }
+    return true;
+}
+
+bool check_line(char *line, t_direction *directions)
+{
+    int i;
+
+    i = 0;
+    while (line[i++] == ' ');
+    if (i-- == (int)ft_strlen(line))
+        return true;
+    if (!ft_strncmp(line+i, "NO", 2))
+    {
+        directions->no_count++;
+        if (!check_path(line+i))
+            return false;
+    } 
+    else if (!ft_strncmp(line+i, "SO", 2))
+    {
+        directions->so_count++;
+        if (!check_path(line+i))
+            return false;
+    }
+    else if (!norm(i, line, directions))
+        return false;
+    return true;
+}

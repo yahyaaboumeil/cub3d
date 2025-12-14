@@ -18,7 +18,7 @@ void load_all_textures(t_info *d)
     load_texture(d->mlx, &d->west, d->data->west_path);
 }
 
-static void init(t_info **info)
+static void init2(t_info **info)
 {
     (*info)->north.height = 0;
     (*info)->north.width = 0;
@@ -49,7 +49,7 @@ void play(t_data *dat)
 {
     t_info *d;
     d = malloc(sizeof(t_info));
-    init(&d);
+    init2(&d);
     d->data = dat;
     d->mlx = mlx_init();
     d->win = mlx_new_window(d->mlx, 800, 600, "cub3D");

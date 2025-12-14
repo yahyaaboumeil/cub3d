@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
+/*   map_parsing.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaboumei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 20:17:33 by yaboumei          #+#    #+#             */
-/*   Updated: 2025/02/26 20:17:35 by yaboumei         ###   ########.fr       */
+/*   Updated: 2025/12/12 17:57:36 by yaboumei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "parsing.h"
@@ -15,23 +15,6 @@
 #include <stdbool.h>
 
 /* --- helpers --- */
-
-static int last_non_newline_index(const char *line)
-{
-    int len;
-
-    if (!line)
-        return -1;
-    len = ft_strlen(line);
-    if (len == 0)
-        return -1;
-    /* index of last character before '\0' */
-    len--;
-    /* skip trailing newline(s) and spaces at end */
-    while (len >= 0 && (line[len] == '\n' || line[len] == '\r' || line[len] == ' '))
-        len--;
-    return len;
-}
 
 bool check_last_line(char *line)
 {
@@ -50,53 +33,6 @@ bool check_last_line(char *line)
     {
         if (line[i] != '1' && line[i] != ' ')
             return false;
-        i++;
-    }
-    return true;
-}
-
-void err_map(int fd, char *line, char **lines)
-{
-    printf("\nError\nYour map should have '1' in the start and at end\n");
-    if (line)
-        free(line);
-    free_getline(fd);
-    free_memory(lines);
-    exit(1);
-}
-
-int skip_espas(char *line)
-{
-    int i = 0;
-    if (!line)
-        return 0;
-    while (line[i] && line[i] == ' ')
-        i++;
-    return i;
-}
-
-bool check_map_line(int fd, char *line, t_counters *counters, char **lines)
-{
-    int i;
-    int end;
-
-    if (line == NULL)
-        return false;
-    i = skip_espas(line);
-    end = last_non_newline_index(line);
-    if (end < 0)
-        err_map(fd, line, lines);
-    if (line[i] != '1' || line[end] != '1')
-        err_map(fd, line, lines);
-    while (line[i] && line[i] != '\n')
-    {
-        if (line[i] != '1' && line[i] != '0' && line[i] != ' ')
-        {
-            if (line[i] == 'N' || line[i] == 'S' || line[i] == 'W' || line[i] == 'E')
-                counters->count_p++;
-            else 
-               return (counters->count_err = -1, false);
-        }
         i++;
     }
     return true;
@@ -136,17 +72,46 @@ char **check_err(int fd, t_counters counters, char *line, char **lines)
     return lines;
 }
 
-int count(char **lines)
+/*void err_map(int fd, char *line, char **lines)
 {
-    int i = 0;
-    if (!lines)
-        return 0;
-    while (lines[i])
-        i++;
-    return i;
-}
+    printf("\nError\nYour map should have '1' in the start and at end\n");
+    if (line)
+        free(line);
+    free_getline(fd);
+    free_memory(lines);
+    exit(1);
+}*/
 
-char **add_line(char *line, char **lines)
+
+/*bool check_map_line(int fd, char *line, t_counters *counters, char **lines)
+{
+    int i;
+    int end;
+
+    if (line == NULL)
+        return false;
+    i = skip_espas(line);
+    end = last_non_newline_index(line);
+    if (end < 0)
+        err_map(fd, line, lines);
+    if (line[i] != '1' || line[end] != '1')
+        err_map(fd, line, lines);
+    while (line[i] && line[i] != '\n')
+    {
+        if (line[i] != '1' && line[i] != '0' && line[i] != ' ')
+        {
+            if (line[i] == 'N' || line[i] == 'S' || line[i] == 'W' || line[i] == 'E')
+                counters->count_p++;
+            else 
+               return (counters->count_err = -1, false);
+        }
+        i++;
+    }
+    return true;
+}*/
+
+
+/*char **add_line(char *line, char **lines)
 {
     char **new;
     int i;
@@ -160,7 +125,7 @@ char **add_line(char *line, char **lines)
         new[i] = ft_strdup(lines[i]);
         i++;
     }
-    new[i] = ft_strdup(line); /* copy added line */
+    new[i] = ft_strdup(line);  copy added line 
     if (!new[i])
     {
         while (--i >= 0)
@@ -172,7 +137,7 @@ char **add_line(char *line, char **lines)
     new[i] = NULL;
     free_memory(lines);
     return new;
-}
+}*/
 
 char **check_first_line(int fd, char **lines)
 {
@@ -219,12 +184,6 @@ char **help(char **lines, char **line, int fd)
     return lines;
 }
 
-t_counters init(t_counters *counters)
-{
-    counters->count_p = 0;
-    counters->count_err = 0;
-    return *counters;
-}
 
 char **check_input(int fd, char **lines)
 {

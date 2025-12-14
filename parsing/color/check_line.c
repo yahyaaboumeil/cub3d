@@ -37,49 +37,29 @@ void free_split(char **arr)
     free(arr);
 }
 
-bool check_line(char *line, t_count *count_color)
+bool check_line2(char *line, t_count *count_color)
 {
     char **split;
     char *content;
     int   parts = 0;
 
-    // skip leading spaces
     while (*line == ' ')
         line++;
-    
-    // detect identifier
     if (*line == 'F')
-    {
-        count_color->count_f++;
-        content = line + 1;
-    }
+        (1) && (count_color->count_f++, content = line + 1);
     else if (*line == 'C')
-    {
-        count_color->count_c++;
-        content = line + 1;
-    }
+        (1) && (count_color->count_c++, content = line + 1);
     else
         return (false);
-
-    // skip spaces after F or C
     while (*content == ' ')
         content++;
-
     split = ft_split(content, ',');
     while (split && split[parts])
         parts++;
-
-    // must be exactly 3 numbers
-    if (parts != 3
-        || !check_rgb_value(split[0])
-        || !check_rgb_value(split[1])
-        || !check_rgb_value(split[2]))
+    if (parts != 3 || !check_rgb_value(split[0]) || !check_rgb_value(split[1]) || !check_rgb_value(split[2]))
     {
         printf("Error\nInvalid color format: %s\n", line);
-        free_split(split);
-        return (false);
+        return (free_split(split), false);
     }
-
-    free_split(split);
-    return (true);
+    return (free_split(split), true);
 }

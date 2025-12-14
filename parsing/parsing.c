@@ -107,22 +107,26 @@ t_data *convert_arr_to_struct(char **arr)
 }
 
 
+
 t_data *parsing(char *file_name)
 {
    int fd;
 
    fd = 0;
    if (!check_file(file_name))
-        return NULL;
+        return (printf("\nError/nthe file should be file.cub\n"), NULL);
    fd = open_file(file_name, fd);
    if (fd == -1)
       return (printf("\nError\nCannot open file\n"), NULL);
    char **lines = diretion_pasing(fd); 
    if (!lines)
-      return NULL;
+        return (printf("\nError\nthere is unexiste path\n"), NULL);
    lines = color_parsing(lines, fd);
    if (!lines)
-      return NULL;
+        return (printf("\nError\nthere is err in the color information\n"), NULL);
    lines  = check_input(fd, lines);
-   return convert_arr_to_struct(lines);
+   t_data *data = convert_arr_to_struct(lines);
+   if (!check_if_can_play_in_map(data->map))
+      return (printf("\nError\nthe map is not suitable for play\n"), free_struct(data), NULL);
+   return data;
 }
