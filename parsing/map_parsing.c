@@ -6,7 +6,7 @@
 /*   By: yaboumei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 20:17:33 by yaboumei          #+#    #+#             */
-/*   Updated: 2025/12/12 17:57:36 by yaboumei         ###   ########.fr       */
+/*   Updated: 2025/12/15 12:23:25 by yaboumei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "parsing.h"
@@ -111,34 +111,6 @@ char **check_err(int fd, t_counters counters, char *line, char **lines)
 }*/
 
 
-/*char **add_line(char *line, char **lines)
-{
-    char **new;
-    int i;
-
-    i = 0;
-    new = malloc(sizeof(char *) * (count(lines)+ 2));
-    if (new == NULL)
-        return NULL;
-    while (lines[i])
-    {
-        new[i] = ft_strdup(lines[i]);
-        i++;
-    }
-    new[i] = ft_strdup(line);  copy added line 
-    if (!new[i])
-    {
-        while (--i >= 0)
-            free(new[i]);
-        free(new);
-        return NULL;
-    }
-    i++;
-    new[i] = NULL;
-    free_memory(lines);
-    return new;
-}*/
-
 char **check_first_line(int fd, char **lines)
 {
     char *line;
@@ -160,13 +132,13 @@ char **check_first_line(int fd, char **lines)
         }
         i++;
     }
-	lines = add_line(line, lines);
+    lines = add_line(line, lines);
     if (!lines)
     {
-        free(line);
-        free_getline(fd);
-        free_memory(lines);
-        return NULL;
+	    free(line);
+	    free_getline(fd);
+	    free_memory(lines);
+	    return NULL;
     }
     free(line);
     return lines;
@@ -187,28 +159,27 @@ char **help(char **lines, char **line, int fd)
 
 char **check_input(int fd, char **lines)
 {
-    int i;
-    char *line;
-    char *temp;
-    t_counters counters;
+	int i;
+	char *line;
+	char *temp;
+	t_counters counters;
 
-    i = 0;
-    counters = init(&counters);
-    lines = help(lines, &line, fd); /* adds the first map line internally */
-    while (true)
-    {
-        if (!check_map_line(fd, line, &counters, lines))
-            break;
+	i = 0;
+	counters = init(&counters);
+	lines = help(lines, &line, fd); /* adds the first map line internally */
+	while (true)
+	{
+		if (!check_map_line(fd, line, &counters, lines))
+		    break;
 		lines = add_line(line, lines);
-        temp = get_line(fd);
-        if (temp == NULL)
-            break;
-        if (line)
-            free(line);
-        line = temp;
-        i++;
-    }
-    
-    return check_err(fd, counters, line, lines);
+		temp = get_line(fd);
+		if (temp == NULL)
+		    break;
+		if (line)
+		    free(line);
+		line = temp;
+		i++;
+	}
+	return check_err(fd, counters, line, lines);
 }
 

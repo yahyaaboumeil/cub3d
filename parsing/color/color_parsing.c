@@ -1,6 +1,6 @@
-#include "color.h"
+#include "../parsing.h"
 
-static void init_struct(t_count *count)
+/*static void init_struct(t_count *count)
 {
     count->count_c = 0;
     count->count_f = 0;
@@ -30,20 +30,20 @@ static char **full_arr(char **lines, int fd, t_count *count, int start)
     char *line;
     int i = start;
 
-    while (i < 6)      
+    while (i < (i + 2))      
     {
         line = get_line(fd);
         if (!line)
-            return free_getline(fd), free_memory(lines), NULL;
+            return (free_getline(fd), free_memory(lines), NULL);
 
         if (!check_line2(line, count))
-            return free(line), free_getline(fd), free_memory(lines), NULL;
+            return (free(line), free_getline(fd), free_memory(lines), NULL);
 
         lines[i] = ft_strdup(line);
         free(line);
 
         if (!lines[i])
-            return free_memory(lines), free_getline(fd), NULL;
+            return (free_memory(lines), free_getline(fd), NULL);
 
         i++;
         lines[i] = NULL;
@@ -52,23 +52,33 @@ static char **full_arr(char **lines, int fd, t_count *count, int start)
     return lines;
 }
 
-char **color_parsing(char **old_lines, int fd)
+char **color_parsing(char **old_lines, int fd, int type)
 {
     char **lines;
     t_count count;
-
     init_struct(&count);
-    lines = malloc(sizeof(char *) * 7);
+
+    if (type == FIRST)
+	    lines = malloc(sizeof(char *) * 3);
+    else
+	    lines = malloc(sizeof(char *) * 7);
+
     if (!lines)
         return NULL;
-    lines = cpy_lines(old_lines, lines);
-    if (!lines)
-        return NULL;
-    lines = full_arr(lines, fd, &count, 4);
+    if (type == FIRST)
+	    lines = full_arr(lines, fd, &count, 0);
+    else
+    {
+	    lines = cpy_lines(old_lines, lines);
+	    if (!lines)
+		return NULL;
+	    lines = full_arr(lines, fd, &count, 4);
+    }
+
     if (!lines)
         return NULL;
     if (count.count_c != 1 || count.count_f != 1)
         return free_memory(lines), free_getline(fd), NULL;
     return lines;
 }
-
+*/

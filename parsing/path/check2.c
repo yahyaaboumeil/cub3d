@@ -28,7 +28,7 @@ bool    check_path(char *line)
         return false;
     if (*(line+ft_strlen(line)-1) == '\n')
         *(line+ft_strlen(line)-1) = 0;
-    path = line+i;
+    path = line+i;	
     fd  = open(path, O_RDONLY);
     if (fd == -1)
         return (printf("\n the file is't exist\n"), false); 
@@ -36,25 +36,29 @@ bool    check_path(char *line)
     return true;
 }
 
-static bool norm(int i, char *line, t_direction *directions)
+static bool norm(t_data *data, int i, char *line, t_direction *directions)
 {
 
     if (!ft_strncmp(line+i, "WE", 2))
     {
         directions->we_count++;
         if (!check_path(line+i))
-            return false;
+		return (free_struct(data), false);
+	    data->west_path = ft_strdup(line+skip_ind_space(line));		
     }
     else if (!ft_strncmp(line+i, "EA", 2))
     {
         directions->ea_count++;
         if (!check_path(line+i))
-            return false;
+		return (free_struct(data), false);
+	data->east_path = ft_strdup(line+skip_ind_space(line));		
     }
+    else 
+	    return false;
     return true;
 }
 
-bool check_line(char *line, t_direction *directions)
+bool check_line(t_data *data, char *line, t_direction *directions)
 {
     int i;
 
@@ -66,15 +70,18 @@ bool check_line(char *line, t_direction *directions)
     {
         directions->no_count++;
         if (!check_path(line+i))
-            return false;
+		return (free_struct(data), false);
+	    data->north_path = ft_strdup(line+skip_ind_space(line));	
+        printf("path north %s\n", data->north_path);	
     } 
     else if (!ft_strncmp(line+i, "SO", 2))
     {
         directions->so_count++;
         if (!check_path(line+i))
-            return false;
+		return (free_struct(data), false);
+	    data->south_path = ft_strdup(line+skip_ind_space(line));		
     }
-    else if (!norm(i, line, directions))
-        return false;
+    else if (!norm(data, i, line, directions))
+        return ( false);
     return true;
 }

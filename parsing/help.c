@@ -41,17 +41,21 @@ char **add_line(char *line, char **lines)
 {
     char **new;
     int i;
+    int j;
 
     i = 0;
+    j = 0;
     new = malloc(sizeof(char *) * (count(lines)+ 2));
     if (new == NULL)
         return NULL;
-    while (lines[i])
+    while (lines && lines[i])
     {
         new[i] = ft_strdup(lines[i]);
         i++;
     }
-    new[i] = ft_strdup(line); /* copy added line */
+    // while (line[j] == ' ')
+	//     j++;
+    new[i] = ft_strdup(line+j); /* copy added line */
     if (!new[i])
     {
         while (--i >= 0)

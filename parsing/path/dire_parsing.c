@@ -1,14 +1,4 @@
 #include "../parsing.h"
-void    init_struct2(t_direction *dire)
-{
-
-    dire->no_count = 0;
-    dire->ea_count = 0;
-    dire->we_count = 0;
-    dire->so_count = 0;
-}
-
-
 char *get_line(int fd)
 {
     char *line;
@@ -24,6 +14,17 @@ char *get_line(int fd)
 
     return line;
 }
+/*
+void    init_struct2(t_direction *dire)
+{
+
+    dire->no_count = 0;
+    dire->ea_count = 0;
+    dire->we_count = 0;
+    dire->so_count = 0;
+}
+
+
 
 static char **full_arr(int fd, char **lines ,t_direction *dire, int i)
 {
@@ -43,13 +44,16 @@ static char **full_arr(int fd, char **lines ,t_direction *dire, int i)
     return lines;
 }
 
-char **diretion_pasing(int fd)
+char **diretion_pasing(int fd, int type)
 {
     int i;
     char **lines;
     t_direction dire;
 
-    i = 0;
+    if (type == FIRST)
+	    i = 0;
+    else
+	    return NULL;
     init_struct2(&dire);
     lines = malloc((sizeof(char*) * 5));
     if (!lines)
@@ -58,4 +62,4 @@ char **diretion_pasing(int fd)
     if (!check_count(lines, dire))
         return (free_memory(lines),free_getline(fd),NULL);
     return (lines);
-}
+}*/

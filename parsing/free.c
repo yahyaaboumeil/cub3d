@@ -30,12 +30,24 @@ void    free_getline(int fd)
 
 void    free_struct(t_data *data)
 {
+	if (data->north_path)
+		free(data->north_path);
+	if (data->west_path)
+		free(data->west_path);
+	if (data->east_path)
+		free(data->east_path);
+	if (data->south_path)
+		free(data->south_path);
 	free_memory(data->map);
-	free(data->north_path);
-	free(data->west_path);
-	free(data->east_path);
-	free(data->south_path);
+	free(data);
 }
+
+void	clean(t_data *data, int fd)
+{
+	free_struct(data);
+	free_getline(fd);
+}
+
 
 void err_map(int fd, char *line, char **lines)
 {

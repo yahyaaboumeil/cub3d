@@ -1,6 +1,7 @@
 #ifndef PARSING_H
 #define PARSING_H
-
+#define FIRST 1
+#define SECONT 2
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -51,8 +52,8 @@ typedef struct s_data
    char *east_path;
    char *south_path;
    char *west_path;
-   int f_color[2];
-   int c_color[2];
+   int f_color[3];
+   int c_color[3];
    int	x;
    int	y;
    int width;
@@ -75,12 +76,14 @@ int open_file(char *file_name, int fd);
 /*free*/
 void    free_memory(char **arr);
 void    free_getline(int fd);
+void    clean(t_data *data, int fd);
 void free_struct(t_data *data);
 
 /*check*/
 bool    is_esp_line(char *line);
 bool	check_file(char *file);
-bool check_line(char *line, t_direction *directions);
+bool 	check_line2(t_data *data, char *line, t_count *count_color);
+bool 	check_line(t_data *data, char *line, t_direction *directions);
 bool    check_path(char *line);
 char **check_count(char **lines, t_direction dire);
 bool check_map_line(int fd, char *line, t_counters *counters, char **lines);
@@ -94,8 +97,8 @@ bool check_map_line(int fd, char *line, t_counters *counters, char **lines);
 char *get_line(int fd);
 char    *cpy_line(char *line);
 
-char **diretion_pasing(int fd);
-char **color_parsing(char **old_lines, int fd);
+char **diretion_pasing(int fd, int type); 
+char **color_parsing(char **old_lines, int fd, int type);
 char **add_line(char *line, char **lines);
 
 t_data *parsing(char *file_name);
