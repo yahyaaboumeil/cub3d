@@ -1,28 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dire_parsing.c                                     :+:      :+:    :+:   */
+/*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaboumei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/19 11:16:37 by yaboumei          #+#    #+#             */
-/*   Updated: 2025/12/19 11:16:39 by yaboumei         ###   ########.fr       */
+/*   Created: 2025/12/19 11:21:53 by yaboumei          #+#    #+#             */
+/*   Updated: 2025/12/19 11:21:57 by yaboumei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing.h"
+#include "parsing.h"
 
-char	*get_line(int fd)
+int	ft_isdigit(int c)
 {
-	char	*line;
-
-	line = get_next_line(fd);
-	if (!line)
-		return (line);
-	while (line && !ft_strncmp(line, "\n", ft_strlen(line)))
-	{
-		free(line);
-		line = get_next_line(fd);
-	}
-	return (line);
+	if (c >= 48 && c <= 57)
+		return (1);
+	return (0);
 }

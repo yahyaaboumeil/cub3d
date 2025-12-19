@@ -24,6 +24,7 @@ char	*ft_strdup(const char *s)
 	ft_strlcpy(ptr, s, len + 1);
 	return (ptr);
 }
+
 static size_t	is_find(const char *big, const char *little, size_t pos,
 		size_t len)
 {
@@ -72,6 +73,7 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	}
 	return (0);
 }
+
 int	ft_atoi(const char *nptr)
 {
 	int	sig;
@@ -93,10 +95,4 @@ int	ft_atoi(const char *nptr)
 		nptr++;
 	}
 	return (num * sig);
-}
-int	ft_isdigit(int c)
-{
-	if (c >= 48 && c <= 57)
-		return (1);
-	return (0);
 }

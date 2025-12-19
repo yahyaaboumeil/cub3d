@@ -12,8 +12,6 @@
 
 #include "get_next_line.h"
 
-//#include "get_next_line_utils.c"
-
 char	*read_from_fd(int fd, char *record, char *s_line)
 {
 	char	*temp;
@@ -60,7 +58,6 @@ char	*split_at_new_line(char **s_line)
 		return (record);
 	}
 	record = ft_substr(*s_line, 0, ft_strlen(*s_line));
-	// free(*s_line);
 	*s_line = NULL;
 	return (record);
 }
@@ -87,25 +84,3 @@ char	*get_next_line(int fd)
 	line = split_at_new_line(&s_line);
 	return (line);
 }
-
-/*int	main(void)
-{
-	int		fd;
-	char *str;
-	int	i;
-
-	fd = open("test.txt", O_RDWR);
-	//if (fd == -1)
-		//return (1);
-	// for(int i = 0; i < 1; i++)
-	i = 0;
-	printf("%d", fd);
-	while ((str = get_next_line(fd)) != NULL)
-	{
-		// str = get_next_line(fd);
-		printf("%d %s", i++, str);
-		free(str);
-	}
-	close(fd);
-	return (0);
-}*/

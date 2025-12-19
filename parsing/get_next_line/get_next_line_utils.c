@@ -5,8 +5,9 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaboumei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/12 12:25:14 by yaboumei          #+#    #+#             */
-/*   Updated: 2024/11/17 20:54:34 by yaboumei         ###   ########.fr       */
+/*   Created: 2025/12/19 11:28:19 by yaboumei          #+#    #+#             */
+/*   Updated: 2025/12/19 11:28:22 by yaboumei         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
@@ -16,7 +17,7 @@ size_t	ft_strlen(const char *s)
 	size_t	i;
 
 	if (!s)
-		return 0;
+		return (0);
 	i = 0;
 	while (s[i])
 		i++;

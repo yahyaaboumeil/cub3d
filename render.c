@@ -1,40 +1,51 @@
-/* file: render.c */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   render.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yaboumei <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/19 09:17:14 by yaboumei          #+#    #+#             */
+/*   Updated: 2025/12/19 09:17:16 by yaboumei         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
-void my_pixel_put(t_game *g, int x, int y, int color)
+void	my_pixel_put(t_game *g, int x, int y, int color)
 {
-    char *dst;
+	char	*dst;
 
-    if (x < 0 || x >= WIN_WIDTH || y < 0 || y >= WIN_HEIGHT)
-        return ;
-    dst = g->addr + (y * g->line_length + x * (g->bits_per_pixel / 8));
-    *(unsigned int *)dst = color;
+	if (x < 0 || x >= WIN_WIDTH || y < 0 || y >= WIN_HEIGHT)
+		return ;
+	dst = g->addr + (y * g->line_length + x * (g->bits_per_pixel / 8));
+	*(unsigned int *)dst = color;
 }
 
-void draw_map(t_game *g)
+void	draw_map(t_game *g)
 {
-    int i;
-    int j;
+	int	i;
+	int	j;
 
-    i = 0;
-    while (i < WIN_HEIGHT)
-    {
-        j = 0;
-        while (j < WIN_WIDTH)
-        {
-            if (i < WIN_HEIGHT / 2)
-                my_pixel_put(g, j, i, g->ceil_color);
-            else
-                my_pixel_put(g, j, i, g->floor_color);
-            j++;
-        }
-        i++;
-    }
+	i = 0;
+	while (i < WIN_HEIGHT)
+	{
+		j = 0;
+		while (j < WIN_WIDTH)
+		{
+			if (i < WIN_HEIGHT / 2)
+				my_pixel_put(g, j, i, g->ceil_color);
+			else
+				my_pixel_put(g, j, i, g->floor_color);
+			j++;
+		}
+		i++;
+	}
 }
 
-void render(t_game *g)
+void	render(t_game *g)
 {
-    draw_map(g);
-    release_rays(g, NULL);
-    mlx_put_image_to_window(g->mlx, g->win, g->img, 0, 0);
+	draw_map(g);
+	release_rays(g, NULL);
+	mlx_put_image_to_window(g->mlx, g->win, g->img, 0, 0);
 }
