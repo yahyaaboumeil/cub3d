@@ -100,10 +100,14 @@ int				open_file(char *file_name, int fd);
 
 /*free*/
 void			free_memory(char **arr);
+void			free_split(char **arr);
+void			norm_free(int fd, char *line, char **lines);
 void			free_getline(int fd);
 void			clean(t_data *data, int fd, int free_map);
 void			free_struct(t_data *data, int free_map);
 
+bool			norm_check_line2(t_data *data, t_check_line *help, char *line,
+					t_count *count);
 /*check*/
 bool			is_esp_line(char *line);
 bool			check_file(char *file);

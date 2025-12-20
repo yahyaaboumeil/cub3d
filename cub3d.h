@@ -51,7 +51,7 @@ typedef struct s_game
 	int			bits_per_pixel;
 	int			line_length;
 	int			endian;
-
+	t_data		*data;
 	// Textures
 	t_img		tex_n;
 	t_img		tex_s;

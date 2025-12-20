@@ -71,3 +71,10 @@ char	**add_line(char *line, char **lines)
 	free_memory(lines);
 	return (new);
 }
+
+void	norm_free(int fd, char *line, char **lines)
+{
+	free(line);
+	free_getline(fd);
+	free_memory(lines);
+}

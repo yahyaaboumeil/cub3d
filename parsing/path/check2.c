@@ -50,14 +50,14 @@ static bool	norm(t_data *data, int i, char *line, t_direction *directions)
 	if (!ft_strncmp(line + i, "WE", 2))
 	{
 		directions->we_count++;
-		if (!check_path(line + i))
+		if (!check_path(line + i) || (directions->we_count > 1))
 			return (false);
 		data->west_path = ft_strdup(line + skip_ind_space(line));
 	}
 	else if (!ft_strncmp(line + i, "EA", 2))
 	{
 		directions->ea_count++;
-		if (!check_path(line + i))
+		if (!check_path(line + i) || (directions->ea_count > 1))
 			return (false);
 		data->east_path = ft_strdup(line + skip_ind_space(line));
 	}
@@ -71,21 +71,22 @@ bool	check_line(t_data *data, char *line, t_direction *directions)
 	int	i;
 
 	i = 0;
+	if (!line)
+		return (false);
 	while (line[i++] == ' ')
 		;
 	if (i-- == (int)ft_strlen(line))
-		return (true);
+		return (false);
 	if (!ft_strncmp(line + i, "NO", 2))
 	{
-		directions->no_count++;
-		if (!check_path(line + i))
+		if (!check_path(line + i) || (++directions->no_count > 1))
 			return (false);
 		data->north_path = ft_strdup(line + skip_ind_space(line));
 	}
 	else if (!ft_strncmp(line + i, "SO", 2))
 	{
 		directions->so_count++;
-		if (!check_path(line + i))
+		if (!check_path(line + i) || (directions->so_count > 1))
 			return (false);
 		data->south_path = ft_strdup(line + skip_ind_space(line));
 	}

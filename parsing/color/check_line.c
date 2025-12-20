@@ -42,18 +42,6 @@ static bool	check_rgb_value(char *str)
 	return (true);
 }
 
-void	free_split(char **arr)
-{
-	int	i;
-
-	i = 0;
-	if (!arr)
-		return ;
-	while (arr[i])
-		free(arr[i++]);
-	free(arr);
-}
-
 static t_data	*save_color(t_data *data, char type, t_count *count, char *line)
 {
 	char	**split;
@@ -81,10 +69,21 @@ static t_data	*save_color(t_data *data, char type, t_count *count, char *line)
 	return (data);
 }
 
+bool	norm_check_line2(t_data *data, t_check_line *help, char *line,
+		t_count *count)
+{
+	data = save_color(data, help->type, count, line);
+	if (!data)
+		return (free_split(help->split), false);
+	return (free_split(help->split), true);
+}
+
 bool	check_line2(t_data *data, char *line, t_count *count_color)
 {
 	t_check_line	help;
 
+	if (!line)
+		return (false);
 	while (*line == ' ')
 		line++;
 	if (*line == 'F')
@@ -104,8 +103,5 @@ bool	check_line2(t_data *data, char *line, t_count *count_color)
 		|| !check_rgb_value(help.split[1]) || !check_rgb_value(help.split[2]))
 		return (printf("Error\nInvalid color format: %s\n", line),
 			free_split(help.split), false);
-	data = save_color(data, help.type, count_color, line);
-	if (!data)
-		return (free_split(help.split), false);
-	return (free_split(help.split), true);
+	return (norm_check_line2(data, &help, line, count_color));
 }

@@ -37,10 +37,14 @@ bool	check_if_can_play_in_map(char **map)
 	{
 		while (map[i][j])
 		{
-			if (map[i][j] == '0')
+			if (map[i][j] == '0' || map[i][j] == 'N' || map[i][j] == 'S'
+				|| map[i][j] == 'W' || map[i][j] == 'E')
 			{
 				if (map[i - 1][j] == ' ' || map[i + 1][j] == ' ' || map[i][j
 					- 1] == ' ' || map[i][j + 1] == ' ')
+					return (false);
+				if (j > (int)ft_strlen(map[i - 1]) || j > (int)ft_strlen(map[i
+							+ 1]))
 					return (false);
 			}
 			j++;

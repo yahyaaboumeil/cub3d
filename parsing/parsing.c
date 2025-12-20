@@ -52,7 +52,7 @@ void	save_width_height(t_data *data)
 	data->hight = i;
 }
 
-t_data	*init_struct(t_data *data)
+t_data	*init_struct(t_data *data, t_direction *dire)
 {
 	data = malloc(sizeof(t_data));
 	data->map = NULL;
@@ -64,7 +64,10 @@ t_data	*init_struct(t_data *data)
 	data->y = 0;
 	data->width = 0;
 	data->hight = 0;
-	data->map = NULL;
+	dire->ea_count = 0;
+	dire->so_count = 0;
+	dire->we_count = 0;
+	dire->no_count = 0;
 	return (data);
 }
 
@@ -91,7 +94,7 @@ t_data	*parsing(char *file_name)
 	t_data		*data;
 
 	(1) && (count.count_f = 0, count.count_c = 0, data = NULL, norm.fd = 0);
-	data = init_struct(data);
+	data = init_struct(data, &directions);
 	norm.i = 0;
 	if (!check_file(file_name))
 		return (printf("\nError\nthe file should be file.cub\n"), NULL);

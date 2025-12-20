@@ -14,13 +14,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void	norm_free(int fd, char *line, char **lines)
-{
-	free(line);
-	free_getline(fd);
-	free_memory(lines);
-}
-
 bool	check_last_line(char *line)
 {
 	int	i;
@@ -64,7 +57,6 @@ char	**check_err(int fd, t_counters counters, char *line, char **lines)
 	return (lines);
 }
 
-
 char	**check_first_line(int fd, char **lines)
 {
 	int		i;
@@ -96,7 +88,7 @@ char	**help(char **lines, char **line, int fd)
 	if (!lines)
 	{
 		printf("\nError\nThe first line isn't correct\n");
-		exit(1);
+		return (NULL);
 	}
 	*line = get_line(fd);
 	return (lines);
@@ -112,6 +104,8 @@ char	**check_input(int fd, char **lines)
 	i = 0;
 	counters = init(&counters);
 	lines = help(lines, &line, fd);
+	if (!lines)
+		return (NULL);
 	while (true)
 	{
 		if (!check_map_line(fd, line, &counters, lines))
